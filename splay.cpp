@@ -36,7 +36,7 @@ private:
 
     int find(int v);                        // 返回数v的编号
     void rotate(int v);                     // 上旋
-    void splay(int v);                      // 将编号v的节点上旋到根结点
+    void splay(int v,int u);                      // 将编号v的节点上旋到根结点
     void update_sum(int v);                 // 更新以编号v的节点为根结点的树的总元素树
     void connect(int v,int u,int loc);      // 连接编号v的节点(父节点)和编号u的节点(子节点)，loc表示子节点的左右
     int ck_loc(int v);                      // 返回编号v的节点是其父节点的左或右
@@ -85,7 +85,7 @@ void Splay::insert(int v) {
         if(v>tree[fa].value)    tree[fa].son[1]=tot;
         else    tree[fa].son[0]=tot;
     }
-    splay(tot);
+    splay(tot,root);
 }
 
 int Splay::find(int v) {
@@ -107,7 +107,7 @@ void Splay::pop(int v) {
         }
     }
     else {                          // 删除该节点
-        splay(loc);                 // 先将要删除的节点旋到根结点
+        splay(loc,root);                 // 先将要删除的节点旋到根结点
         int pre=tree[root].son[0];
         
         if(!tree[root].son[0]) {    // 若该节点旋到根结点后没有左儿子，则直接删除该节点，让其右儿子作为根结点
@@ -118,7 +118,7 @@ void Splay::pop(int v) {
             while(tree[pre].son[1]) pre=tree[pre].son[1];   // 找到要删除的节点的前驱
             
             // 将前驱旋到根结点，此时根结点的右儿子即为要删除的点，而要删除的点没有左儿子，所以直接连接此时的根结点和孙子节点
-            splay(pre);
+            splay(pre,root);
             int grandson=tree[tree[root].son[1]].son[1];
             connect(root,grandson,1);
 
@@ -142,7 +142,7 @@ void Splay::find_rank(int v) {
             temp=tree[temp].son[0];
         }
     }
-    if(temp)    splay(temp);
+    if(temp)    splay(temp,root);
     printf("%d\n",ret);
 }
 
@@ -162,7 +162,7 @@ void Splay::find_num(int v) {
             break;
         }
     }
-    if(temp)    splay(temp);
+    if(temp)    splay(temp,root);
     printf("%d\n",tree[ret].value);
 }
 
@@ -216,9 +216,10 @@ void Splay::rotate(int v) {
     update_sum(v);
 }
 
-void Splay::splay(int v) {
-    while(tree[v].fa && tree[tree[v].fa].fa) {
-        if(ck_loc(v)==ck_loc(tree[v].fa)) {     // 三点一线需先旋转父节点
+void Splay::splay(int v,int u) {                // 将编号为v的节点旋到编号为u的节点
+    while(tree[v].fa!=u) {
+        if(tree[v].fa==u)  rotate(v);
+        else if(ck_loc(v)==ck_loc(tree[v].fa)) {     // 三点一线需先旋转父节点
             rotate(tree[v].fa);
             rotate(v);
         }
@@ -227,8 +228,7 @@ void Splay::splay(int v) {
             rotate(v);
         }
     }
-    if(tree[v].fa)   rotate(v);
-    root=v;
+    if(!tree[v].fa) root=v;
 }
 
 Splay s;
