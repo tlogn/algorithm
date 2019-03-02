@@ -22,21 +22,21 @@ public:
     void find_num(int v);       // 找到排名为v的数
     void find_pre(int v,int u); // 找到在以u为根节点的树中，数v的前驱
     void find_next(int v,int u);// 找到在以u为根结点的树中，数u的后继
-
+    
     ~Splay() {}
     
 private:
-
+    
     struct node {
         int son[2],fa,cnt,value,sum;
         node() {son[0]=son[1]=fa=cnt=value=sum=0;}      // cnt：自身重复的次数   value：该编号的值  sum：以该编号为根结点的树的总元素数(包括自身的重复次数)
     }tree[MAXN];
     
     int tot;
-
+    
     int find(int v);                        // 返回数v的编号
     void rotate(int v);                     // 上旋
-    void splay(int v,int u);                      // 将编号v的节点上旋到根结点
+    void splay(int v,int u);                      // 将编号v的节点上旋到编号为u的结点
     void update_sum(int v);                 // 更新以编号v的节点为根结点的树的总元素树
     void connect(int v,int u,int loc);      // 连接编号v的节点(父节点)和编号u的节点(子节点)，loc表示子节点的左右
     int ck_loc(int v);                      // 返回编号v的节点是其父节点的左或右
@@ -58,14 +58,14 @@ void Splay::insert(int v) {
         tree[tot].cnt++;
         tree[tot].value=v;
         tree[0].son[0]=tot;
-        root=1;
+        root=tot;
     }
     else {                              // 在树的底部插入新节点
         int temp=root;
         int fa=0;
         while(temp) {
             tree[temp].sum++;           // 插入数时经过的每个节点的总元素数加一
-            if(tree[temp].value==v) {   // 节点存在就将次数加一
+            if(tree[temp].value==v) {   // 节点已存在就将次数加一
                 tree[temp].cnt++;
                 return;
             }
@@ -121,7 +121,7 @@ void Splay::pop(int v) {
             splay(pre,root);
             int grandson=tree[tree[root].son[1]].son[1];
             connect(root,grandson,1);
-
+            
             update_sum(root);   // 只有根结点的sum值发生改变
         }
     }
@@ -217,8 +217,9 @@ void Splay::rotate(int v) {
 }
 
 void Splay::splay(int v,int u) {                // 将编号为v的节点旋到编号为u的节点
-    while(tree[v].fa!=u) {
-        if(tree[v].fa==u)  rotate(v);
+    int to=tree[u].fa;                          // 必须设置一个to将u的父节点记录下来，因为u的父节点可能会随着v的上旋而改变
+    while(tree[v].fa!=to) {
+        if(tree[tree[v].fa].fa==to)  rotate(v);
         else if(ck_loc(v)==ck_loc(tree[v].fa)) {     // 三点一线需先旋转父节点
             rotate(tree[v].fa);
             rotate(v);
@@ -245,6 +246,6 @@ int main() {
         else if(t1==5)  s.find_pre(t2,s.root);
         else if(t1==6)  s.find_next(t2,s.root);
     }
-    
     return 0;
 }
+
