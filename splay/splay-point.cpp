@@ -1,3 +1,8 @@
+/*
+splay通过点的权值，维护二叉查找树的性质
+luogu: 3369
+*/
+
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
