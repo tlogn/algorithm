@@ -32,11 +32,13 @@ void KMP::get_next() {
 void KMP::kmp() {
     int k=-1,len=strlen(substring);
     for(int i=0;mainstring[i];i++) {
-        while(k>-1 && mainstring[i]!=substring[k+1])    k=_next[k];
+        while(k>-1 && mainstring[i]!=substring[k+1])    k=_next[k]; 
+        // 失配就通过next跳转
         if(mainstring[i]==substring[k+1])   k++;
-        if(k==len-1) {
+        // 二者字符匹配就把指针++
+        if(k==len-1) {  // 指针指向子串末尾，说明匹配成功
             printf("%d\n",i-len+2);
-            k=_next[k];
+            k=_next[k]; // 匹配成功后通过next跳转继续匹配，避免漏解
         }
     }
 }
