@@ -23,8 +23,9 @@ void KMP::get_next() {
     _next[0]=-1;
     int k=-1;
     for(int i=1;substring[i];i++) {
-        while(k>-1 && substring[k+1]!=substring[i]) k=_next[k];
-        if(substring[k+1]==substring[i]) _next[i]=_next[++k];
+        while(k>-1 && substring[k+1]!=substring[i]) k=_next[k]; // 如果不相等就一直回溯到相等或者回溯到头为止
+        if(substring[k+1]==substring[i]) k++;
+        // 如果二者相同，指针++。因为二者相同，所以当此位置失配时，通过next转移的位置也必然失配。KMP算法和MP算法的区别就在于避免了这种失配。此处为MP算法（自我感觉已经很快了，够用了）
         _next[i]=k;
     }
 }
@@ -35,8 +36,7 @@ void KMP::kmp() {
         if(mainstring[i]==substring[k+1])   k++;
         if(k==len-1) {
             printf("%d\n",i-len+2);
-            k=-1;
-            i=i-len+1;
+            k=_next[k];
         }
     }
 }
