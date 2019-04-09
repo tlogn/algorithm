@@ -24,7 +24,7 @@ public:
 private:
 	int sum(int id);
 	int lowbit(int id);
-	int n,m,tree[MAXN];
+	int n=5,m,tree[MAXN];
 };
 
 int BinaryIndexTree::lowbit(int id) {	
@@ -65,6 +65,9 @@ void BinaryIndexTree::readin() {
 }
 BinaryIndexTree s;
 int main() {
-	s.readin();
+	//s.readin();
+	s.update(2,1);
+	s.update(5,1);
+	std::cout<<s.query(1,1);
 	return 0;
 }
