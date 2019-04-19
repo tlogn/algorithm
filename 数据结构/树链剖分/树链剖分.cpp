@@ -28,7 +28,7 @@ private:
 
 void SegmentTree::pushdown(int v,int left,int right) {
 	if(lazy[v]) {
-	    int mid=(left+right)>>1;
+		int mid=(left+right)>>1;
 		tree[v<<1]=(tree[v<<1]+lazy[v]*(mid-left+1))%mod;
 		tree[v<<1|1]=(tree[v<<1|1]+lazy[v]*(right-mid))%mod;
 		lazy[v<<1]=(lazy[v<<1]+lazy[v])%mod;
@@ -49,12 +49,12 @@ long long SegmentTree::query(int v,int left,int right,int goal_left,int goal_rig
 }
 
 void SegmentTree::update(int v,int left,int right,int goal_left,int goal_right,int value) {
-    pushdown(v,left,right);	
-    if(goal_left<=left && right<=goal_right) {
-        tree[v]=(tree[v]+(long long)(right-left+1)*value)%mod;
-        lazy[v]=(lazy[v]+value)%mod;
-        return;
-    }
+	pushdown(v,left,right);	
+	if(goal_left<=left && right<=goal_right) {
+		tree[v]=(tree[v]+(long long)(right-left+1)*value)%mod;
+        	lazy[v]=(lazy[v]+value)%mod;
+        	return;
+    	}
 	int mid=(left+right)>>1;
 	if(mid>=goal_left)	update(v<<1,left,mid,goal_left,goal_right,value);
 	if(mid<goal_right)	update(v<<1|1,mid+1,right,goal_left,goal_right,value);
@@ -71,50 +71,50 @@ void SegmentTree::build_tree(int v,int left,int right) {
 
 class Tree : public SegmentTree {
 public:
-    Tree() : SegmentTree() {}
+	Tree() : SegmentTree() {}
     void readin();
 private:  
-    vector<int>tree[MAXN];
-    int val[MAXN],fa[MAXN],size[MAXN],depth[MAXN],heavy_son[MAXN],id[MAXN],top[MAXN];
-    int n,m,root;
-    int cnt=0;
-    void dfs1(int v,int u,int d);
-    void dfs2(int v,int top_v);
-    void update_tree(int left,int right,int value);
-    long long query_tree(int left,int right);
+	vector<int>tree[MAXN];
+	int val[MAXN],fa[MAXN],size[MAXN],depth[MAXN],heavy_son[MAXN],id[MAXN],top[MAXN];
+	int n,m,root;
+	int cnt=0;
+	void dfs1(int v,int u,int d);
+	void dfs2(int v,int top_v);
+	void update_tree(int left,int right,int value);
+	long long query_tree(int left,int right);
 };
 
 void Tree::update_tree(int left,int right,int value) {
-    while(top[left] != top[right]) {
+	while(top[left] != top[right]) {
         if(depth[top[left]] > depth[top[right]])  swap(left,right); // 比较两条链的顶点的深度
-        update(1,1,n,id[top[right]],id[right],value);
-        right=fa[top[right]];
+        	update(1,1,n,id[top[right]],id[right],value);
+        	right=fa[top[right]];
     }
     if(depth[left] > depth[right])  swap(left,right);               // 在一条链上后维护这条链上的值
     update(1,1,n,id[left],id[right],value);
 }
 
 long long Tree::query_tree(int left,int right) {
-    long long ret=0;
-    while(top[left] != top[right]) {
-        if(depth[top[left]] > depth[top[right]])  swap(left,right);
-        ret=(ret+query(1,1,n,id[top[right]],id[right]))%mod;
-        right=fa[top[right]];
-    }
-    if(depth[left] > depth[right])  swap(left,right);
-    ret=(ret+query(1,1,n,id[left],id[right]))%mod;
-    return ret;
+	long long ret=0;
+	while(top[left] != top[right]) {
+   	 	if(depth[top[left]] > depth[top[right]])  swap(left,right);
+   	 	ret=(ret+query(1,1,n,id[top[right]],id[right]))%mod;
+    	right=fa[top[right]];
+	}
+	if(depth[left] > depth[right])  swap(left,right);
+	ret=(ret+query(1,1,n,id[left],id[right]))%mod;
+	return ret;
 }
 
 void Tree::dfs1(int v,int u,int d) {
-    depth[v]=d;             // 记录每个点的深度
-    fa[v]=u;                // 记录每个点的父亲
-    size[v]=1;              // 记录每个以v为根节点的子树大小
-    int max_size=-1;
-    for(int i=tree[v].size()-1;i>=0;i--) {
-        if(tree[v][i]!=fa[v]) {  
-            dfs1(tree[v][i],v,d+1);
-            size[v]+=size[tree[v][i]];      // 更新子树大小
+	depth[v]=d;             // 记录每个点的深度
+	fa[v]=u;                // 记录每个点的父亲
+	size[v]=1;              // 记录每个以v为根节点的子树大小
+	int max_size=-1;
+	for(int i=tree[v].size()-1;i>=0;i--) {
+	   	if(tree[v][i]!=fa[v]) {  
+       		dfs1(tree[v][i],v,d+1);
+			size[v]+=size[tree[v][i]];      // 更新子树大小
             if(max_size < size[tree[v][i]]) {       // 找到重儿子
                 heavy_son[v] = tree[v][i];
                 max_size = size[tree[v][i]];
