@@ -49,7 +49,7 @@ long long SegmentTree::query(int v,int left,int right,int goal_left,int goal_rig
 }
 
 void SegmentTree::update(int v,int left,int right,int goal_left,int goal_right,int value) {
-	pushdown(v,left,right);	
+    pushdown(v,left,right);	
     if(goal_left<=left && right<=goal_right) {
         tree[v]=(tree[v]+(long long)(right-left+1)*value)%mod;
         lazy[v]=(lazy[v]+value)%mod;
