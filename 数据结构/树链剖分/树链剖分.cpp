@@ -17,20 +17,18 @@ class SegmentTree {
 public:
 	SegmentTree() {};
 	~SegmentTree() {};
-    int x[MAXN],mod;
-    void build_tree(int v,int left,int right);
+ 	int x[MAXN],mod;
+	void build_tree(int v,int left,int right);
 	void update(int v,int left,int right,int goal_left,int goal_right,int value);
 	long long query(int v,int left,int right,int goal_left,int goal_right);
 private:
-
 	void pushdown(int v,int left,int right);
-
 	long long tree[MAXN*4],lazy[MAXN*4];
 };
 
 void SegmentTree::pushdown(int v,int left,int right) {
 	if(lazy[v]) {
-		int mid=(left+right)>>1;
+	    int mid=(left+right)>>1;
 		tree[v<<1]=(tree[v<<1]+lazy[v]*(mid-left+1))%mod;
 		tree[v<<1|1]=(tree[v<<1|1]+lazy[v]*(right-mid))%mod;
 		lazy[v<<1]=(lazy[v<<1]+lazy[v])%mod;
