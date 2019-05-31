@@ -33,15 +33,15 @@ public:
 private:
     
     struct node {
-        int son[2],fa,cnt,value,sum,lazy;
-        node() {son[0]=son[1]=fa=cnt=value=sum=lazy=0;}      // cnt：自身重复的次数   value：该编号的值  sum：以该编号为根结点的树的总元素数(包括自身的重复次数)   lazy：翻转标记
+        int son[2],fa,cnt,value,size,lazy;
+        node() {son[0]=son[1]=fa=cnt=value=size=lazy=0;}      // cnt：自身重复的次数   value：该编号的值  size：以该编号为根结点的树的总元素数(包括自身的重复次数)   lazy：翻转标记
     }tree[MAXN];
     
     int tot;
     
     void rotate(int v);                     // 上旋
     void splay(int v,int u);                      // 将编号v的节点上旋到编号为u的结点
-    void update_sum(int v);                 // 更新以编号v的节点为根结点的树的总元素树
+    void update_size(int v);                 // 更新以编号v的节点为根结点的树的总元素树
     void connect(int v,int u,int loc);      // 连接编号v的节点(父节点)和编号u的节点(子节点)，loc表示子节点的左右
     int ck_loc(int v);                      // 返回编号v的节点是其父节点的左或右
     
@@ -70,14 +70,14 @@ int Splay::find_loc(int v) {
         pushdown(temp);
         // 在找第v位的时候一定要pushdown，不然左右子树没有翻转，找到的节点不对
         int son0=tree[temp].son[0],son1=tree[temp].son[1];
-        if(tree[son0].sum+tree[temp].cnt+loc<v) {
-            loc+=tree[son0].sum+tree[temp].cnt;
+        if(tree[son0].size+tree[temp].cnt+loc<v) {
+            loc+=tree[son0].size+tree[temp].cnt;
             temp=son1;
         }
-        else if(tree[son0].sum+loc>=v) {
+        else if(tree[son0].size+loc>=v) {
             temp=son0;
         }
-        else if(loc+tree[son0].sum<v && loc+tree[son0].sum+tree[temp].cnt>=v){
+        else if(loc+tree[son0].size<v && loc+tree[son0].size+tree[temp].cnt>=v){
             ret=temp;
             break;
         }
@@ -110,7 +110,7 @@ void Splay::reverse(int left,int right) {
 void Splay::insert(int v) {
     tot++;
     if(tot==1) {                // 对根结点特判
-        tree[tot].sum++;
+        tree[tot].size++;
         tree[tot].fa=0;
         tree[tot].cnt++;
         tree[tot].value=v;
@@ -121,7 +121,7 @@ void Splay::insert(int v) {
         int temp=root;
         int fa=0;
         while(temp) {
-            tree[temp].sum++;           // 插入数时经过的每个节点的总元素数加一
+            tree[temp].size++;           // 插入数时经过的每个节点的总元素数加一
             if(tree[temp].value==v) {   // 节点已存在就将次数加一
                 tree[temp].cnt++;
                 return;
@@ -135,7 +135,7 @@ void Splay::insert(int v) {
                 temp=tree[temp].son[1];
             }
         }
-        tree[tot].sum++;                // 初始化该点
+        tree[tot].size++;                // 初始化该点
         tree[tot].fa=fa;
         tree[tot].cnt++;
         tree[tot].value=v;
@@ -149,9 +149,9 @@ int Splay::ck_loc(int v) {
     return v==tree[tree[v].fa].son[0] ? 0:1;
 }
 
-void Splay::update_sum(int v) {
+void Splay::update_size(int v) {
     int son0=tree[v].son[0],son1=tree[v].son[1];
-    tree[v].sum=tree[son0].sum+tree[son1].sum+tree[v].cnt;
+    tree[v].size=tree[son0].size+tree[son1].size+tree[v].cnt;
 }
 
 void Splay::connect(int v,int u,int loc) {      // v:father u:son
@@ -167,8 +167,8 @@ void Splay::rotate(int v) {
     connect(tree[u].fa,v,loc_u);
     connect(v,u,loc_v^1);
     
-    update_sum(u);
-    update_sum(v);
+    update_size(u);
+    update_size(v);
 }
 
 void Splay::splay(int v,int u) {                // 将编号为v的节点旋到编号为u的节点
